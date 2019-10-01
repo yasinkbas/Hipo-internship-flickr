@@ -10,11 +10,16 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    // Components
     lazy var tableView = UITableView()
+    lazy var searchBar:UISearchBar = UISearchBar()
+    
+    // instances
     var safeArea: UILayoutGuide!
     
     var photos: [Photo]? = nil
     var method: FlickrMethod = .recent
+    var searchedText: String?
     var fetchingMore = false
     
     var service = Service.shared
@@ -27,6 +32,21 @@ class ViewController: UIViewController {
         tableView.delegate              = self
         tableView.estimatedRowHeight    = view.bounds.height / 2.5
         tableView.separatorStyle        = .none
+        
+        // search bar
+        searchBar.searchBarStyle = UISearchBar.Style.default
+        searchBar.placeholder = " Search..."
+        searchBar.sizeToFit()
+        searchBar.isTranslucent = false
+        searchBar.backgroundImage = UIImage()
+        searchBar.delegate = self
+        searchBar.showsCancelButton = false
+        
+        // remove x button from searchbar because we already use cancel button
+        let searchBarStyle = searchBar.value(forKey: "searchField") as? UITextField
+        searchBarStyle?.clearButtonMode = .never
+        
+        navigationItem.titleView = searchBar
         
         service.fetchRecentPosts(page: .firstPage) { photos in
             if let photos = photos?.photo {
@@ -48,7 +68,6 @@ class ViewController: UIViewController {
     func setupTableView() {
         view.addSubview(tableView)
         
-        // TODO: Use anchor extension func
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -59,9 +78,8 @@ class ViewController: UIViewController {
         tableView.register(PostCell.self, forCellReuseIdentifier: "cell")
     }
 
-
 }
-
+// MARK: - TableViewDataSource&TableViewDelegate
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -99,17 +117,60 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         print("fetch is started")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.service.fetchRecentPosts(page: .nextPage) { photos in
-                print("1")
-                if let photos = photos {
-                    self.photos! += photos.photo
-                    self.tableView.reloadData()
-                    print(self.photos)
-                    print("2")
+            switch self.method {
+                
+            case .recent:
+                self.service.fetchRecentPosts(page: .nextPage) { photos in
+                   if let photos = photos {
+                       self.photos! += photos.photo
+                       self.tableView.reloadData()
+                       print(self.photos)
+                   }
+               }
+                
+            case .search:
+                self.service.fetchSearchedPosts(with: self.searchedText ?? "", page: .nextPage) { photos in
+                    if let photos = photos {
+                        self.photos! += photos.photo
+                        self.tableView.reloadData()
+                        print(self.photos)
+                    }
                 }
             }
+           
             self.fetchingMore = false
             print("fetch is ended")
+        }
+    }
+}
+
+// MARK:- SearchBarDelegate
+extension ViewController: UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // show cancel button if not empty
+        if let text = searchBar.text {
+            searchBar.showsCancelButton = text == "" ? false : true
+        }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        // clear the text in the search bar
+        searchBar.text = ""
+        // hideCancel button
+        searchBar.showsCancelButton = false
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.method = .search
+        guard let text = searchBar.text else { return }
+        self.searchedText = text
+        service.fetchSearchedPosts(with: text, page: .firstPage) { photos in
+            guard let photos = photos else { return }
+            self.photos = photos.photo
+            self.searchBar.endEditing(true)
+            self.tableView.reloadData()
+            
         }
     }
 }

@@ -11,7 +11,6 @@ import Alamofire
 
 enum FlickrMethod:String {
     case recent     = "flickr.photos.getRecent"
-    case popular    = "flickr.photos.getPopular"
     case search     = "flickr.photos.search"
 }
 

@@ -16,7 +16,7 @@
 - [x] caching photos
 
 ##### Search bar
-- [ ] defining search bar
+- [x] defining search bar
 
 ##### Bonus
 - [ ] Search suggestion

@@ -47,7 +47,6 @@ class PostCell: UITableViewCell {
         return image
     }()
     
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubview(ownerLabel)
@@ -102,7 +101,6 @@ class PostCell: UITableViewCell {
                          width: 0,
                          height: 0,
                          enableInsets: false)
-        
         
     }
     

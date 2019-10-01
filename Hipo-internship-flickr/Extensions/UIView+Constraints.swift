@@ -22,7 +22,6 @@ extension UIView {
              bottomInset = insets.bottom
          }
      
-     
          if let top = top {
             self.topAnchor.constraint(equalTo: top, constant: paddingTop+topInset).isActive = true
          }
@@ -41,7 +40,5 @@ extension UIView {
          if width != 0 {
             widthAnchor.constraint(equalToConstant: width).isActive = true
          }
- 
     }
- 
 }
