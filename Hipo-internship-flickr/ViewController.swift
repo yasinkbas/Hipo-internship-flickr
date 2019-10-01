@@ -11,9 +11,10 @@ import UIKit
 class ViewController: UIViewController {
     
     // Components
-    lazy var tableView = UITableView()
+    lazy var baseTableView = UITableView()
     lazy var searchBar:UISearchBar = UISearchBar()
     lazy var refreshControl = UIRefreshControl()
+    lazy var proposition = UITableView()
     
     // instances
     var safeArea: UILayoutGuide!
@@ -22,17 +23,25 @@ class ViewController: UIViewController {
     var method: FlickrMethod = .recent
     var searchedText: String? = "cats"
     var fetchingMore = false
+    var propositionArray: [String]? = nil
     
     var service = Service.shared
+    var udManager = UserDefaultsManager.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // tableview
-        tableView.dataSource            = self
-        tableView.delegate              = self
-        tableView.estimatedRowHeight    = view.bounds.height / 2.5
-        tableView.separatorStyle        = .none
+        // base table view
+        baseTableView.dataSource            = self
+        baseTableView.delegate              = self
+        baseTableView.estimatedRowHeight    = view.bounds.height / 2.5
+        baseTableView.separatorStyle        = .none
+        
+        // proposition
+        proposition.dataSource              = self
+        proposition.delegate                = self
+        proposition.isHidden                = true
+        
         
         // search bar
         searchBar.searchBarStyle = UISearchBar.Style.default
@@ -41,36 +50,54 @@ class ViewController: UIViewController {
         searchBar.isTranslucent = false
         searchBar.backgroundImage = UIImage()
         searchBar.delegate = self
-        searchBar.showsCancelButton = false
+        searchBar.showsCancelButton = true
                 
         navigationItem.titleView = searchBar
         
         changeRefreshControlTitle(with: "cats")
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: UIControl.Event.valueChanged)
-        tableView.addSubview(refreshControl)
+        baseTableView.addSubview(refreshControl)
         
         getPostsOnStart()
+        udManager.removeHistory()
     }
     
     override func loadView() {
         super.loadView()
+        
         view.backgroundColor = .white
         safeArea = view.layoutMarginsGuide
-        view.addSubview(tableView)
-        setupTableView()
+        view.addSubview(baseTableView)
+        
+        setupBaseTableView()
+        setupProposition()
     }
     
-    func setupTableView() {
-        view.addSubview(tableView)
+    func setupBaseTableView() {
+        view.addSubview(baseTableView)
         
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        baseTableView.translatesAutoresizingMaskIntoConstraints = false
+        baseTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        baseTableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        baseTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        baseTableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
         
-        tableView.register(PostCell.self, forCellReuseIdentifier: "cell")
+        baseTableView.register(PostCell.self, forCellReuseIdentifier: "cell")
+    }
+    
+    func setupProposition() {
+        view.addSubview(proposition)
+        
+        proposition.translatesAutoresizingMaskIntoConstraints = false
+        proposition.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        proposition.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        proposition.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        proposition.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        
+        proposition.register(UITableViewCell.self, forCellReuseIdentifier: "propositionCell")
+        
     }
     
     @objc func refresh(sender:AnyObject) {
@@ -103,7 +130,7 @@ class ViewController: UIViewController {
             if let photos = photos?.photo {
                 self.photos = photos
                 print(photos)
-                self.tableView.reloadData()
+                self.baseTableView.reloadData()
             }
         }
     }
@@ -115,19 +142,51 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return view.bounds.height / 2.5
+        if tableView == baseTableView {
+            return view.bounds.height / 2.5
+        } else {
+            return 44
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        photos?.count ?? 0
+        if tableView == baseTableView {
+            return photos?.count ?? 0
+        } else if tableView == proposition {
+            return propositionArray?.count ?? 0
+        } else {
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as? PostCell,
-              let photos = photos else { return UITableViewCell() }
-        cell.configureCell(photo: photos[indexPath.row])
         
-        return cell 
+        if tableView == baseTableView {
+            
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as? PostCell,
+                  let photos = photos else { return UITableViewCell() }
+            cell.configureCell(photo: photos[indexPath.row])
+            
+            return cell
+        } else if tableView == proposition {
+            print(1)
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "propositionCell") else { return UITableViewCell() }
+            cell.textLabel?.text = propositionArray![indexPath.row]
+            print(propositionArray![indexPath.row])
+            
+            return cell
+        } else {
+            return UITableViewCell()
+        }
+       
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView == baseTableView {
+            
+        } else if tableView == proposition {
+            searchBar.text = propositionArray![indexPath.row]
+        }
     }
     
     // MARK:- Infinite Scroll Tableview
@@ -155,7 +214,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 self.service.fetchRecentPosts(page: .nextPage) { photos in
                     if let photos = photos {
                         self.photos! += photos.photo
-                        self.tableView.reloadData()
+                        self.baseTableView.reloadData()
                    }
                }
                 
@@ -163,7 +222,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 self.service.fetchSearchedPosts(with: self.searchedText ?? "", page: .nextPage) { photos in
                     if let photos = photos {
                         self.photos! += photos.photo
-                        self.tableView.reloadData()
+                        self.baseTableView.reloadData()
                     }
                 }
             }
@@ -178,18 +237,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//         show cancel button if not empty
-//        if let text = searchBar.text {
-//            searchBar.showsCancelButton = text == "" ? false : true
-//        }
         searchBar.showsCancelButton = true // showed cancel button for using dissmiss keyboard
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
-        searchBar.showsCancelButton = false
-        
-        self.searchBar.endEditing(true)
+        proposition.isHidden = true
+        searchBar.endEditing(true)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -200,9 +254,19 @@ extension ViewController: UISearchBarDelegate {
             guard let photos = photos else { return }
             self.photos = photos.photo
             self.searchBar.endEditing(true)
-            self.tableView.reloadData()
+            self.baseTableView.reloadData()
             self.changeRefreshControlTitle(with: text)
+            self.udManager.addHistory(text: text)
+            self.proposition.isHidden = true
         }
     }
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        propositionArray = udManager.getHistory()?.reversed()
+        proposition.reloadData()
+        proposition.isHidden = propositionArray == nil // if history is nil don't show proposition tableview
+        return true
+    }
+
 }
 

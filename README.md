@@ -11,6 +11,7 @@
 - [x] implementing tableView
 - [x] implementing custom cell
 - [x] implementing infinite scroll for table view
+- [x] implementing refresh control
 
 ##### Image Caching
 - [x] caching photos
@@ -19,6 +20,6 @@
 - [x] defining search bar
 
 ##### Bonus
-- [ ] Search suggestion
+- [x] Search suggestion
 - [ ] Fullscreen photos
 - [ ] Using PureLayout

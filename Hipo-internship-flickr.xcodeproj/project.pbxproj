@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6DDC4BA4C2DD0F8D6C762D0F /* Pods_Hipo_internship_flickr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5A9FC0AAFC548148C2B8C /* Pods_Hipo_internship_flickr.framework */; };
 		99F2720878CDB48AD8575C83 /* Pods_Hipo_internship_flickrTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91994AD8CC736D12B5CF9CE1 /* Pods_Hipo_internship_flickrTests.framework */; };
+		C2AAF0C4234382A10076A261 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AAF0C3234382A10076A261 /* UserDefaultsManager.swift */; };
 		C2D03A782343473A005A0A50 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D03A772343473A005A0A50 /* AppDelegate.swift */; };
 		C2D03A7C2343473A005A0A50 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D03A7B2343473A005A0A50 /* ViewController.swift */; };
 		C2D03A812343473A005A0A50 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2D03A802343473A005A0A50 /* Assets.xcassets */; };
@@ -39,6 +40,7 @@
 		91994AD8CC736D12B5CF9CE1 /* Pods_Hipo_internship_flickrTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hipo_internship_flickrTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		960792B4ED1DBAE31D23BBFF /* Pods-Hipo-internship-flickr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hipo-internship-flickr.debug.xcconfig"; path = "Target Support Files/Pods-Hipo-internship-flickr/Pods-Hipo-internship-flickr.debug.xcconfig"; sourceTree = "<group>"; };
 		AE8F28A945ED8086358BFB64 /* Pods-Hipo-internship-flickrTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hipo-internship-flickrTests.debug.xcconfig"; path = "Target Support Files/Pods-Hipo-internship-flickrTests/Pods-Hipo-internship-flickrTests.debug.xcconfig"; sourceTree = "<group>"; };
+		C2AAF0C3234382A10076A261 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		C2D03A742343473A005A0A50 /* Hipo-internship-flickr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hipo-internship-flickr.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2D03A772343473A005A0A50 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Hipo-internship-flickr/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
 		C2D03A7B2343473A005A0A50 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -87,6 +89,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		C2AAF0C22343828C0076A261 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C2AAF0C3234382A10076A261 /* UserDefaultsManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		C2D03A6B2343473A005A0A50 = {
 			isa = PBXGroup;
 			children = (
@@ -118,6 +128,7 @@
 				C2D03A822343473A005A0A50 /* LaunchScreen.storyboard */,
 				C2E3743C234352060014646A /* Extensions */,
 				C2E3743423434B180014646A /* Env */,
+				C2AAF0C22343828C0076A261 /* Managers */,
 				C2E3743223434AFC0014646A /* Service */,
 				C2E3743323434B0E0014646A /* App */,
 			);
@@ -371,6 +382,7 @@
 				C2D03A782343473A005A0A50 /* AppDelegate.swift in Sources */,
 				C2E3743723434CD60014646A /* Service.swift in Sources */,
 				C2E3744023435CE90014646A /* Date+Timeago.swift in Sources */,
+				C2AAF0C4234382A10076A261 /* UserDefaultsManager.swift in Sources */,
 				C2E3743B23434F880014646A /* Post.swift in Sources */,
 				C2E3743E23435CAD0014646A /* PostCell.swift in Sources */,
 				C2E3744423435D320014646A /* UIView+Constraints.swift in Sources */,
