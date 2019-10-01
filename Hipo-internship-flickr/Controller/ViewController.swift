@@ -8,7 +8,13 @@
 
 import UIKit
 
+protocol Transmission: class {
+    func transferImageView(imageUrl:String)
+}
+
 class ViewController: UIViewController {
+    
+    private weak var delegate: Transmission?
     
     // Components
     lazy var baseTableView = UITableView()
@@ -20,7 +26,7 @@ class ViewController: UIViewController {
     var safeArea: UILayoutGuide!
     
     var photos: [Photo]? = nil
-    var method: FlickrMethod = .recent
+    var method: FlickrMethod = .search
     var searchedText: String? = "cats"
     var fetchingMore = false
     var propositionArray: [String]? = nil
@@ -32,34 +38,34 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         // base table view
-        baseTableView.dataSource            = self
-        baseTableView.delegate              = self
-        baseTableView.estimatedRowHeight    = view.bounds.height / 2.5
-        baseTableView.separatorStyle        = .none
+        baseTableView.dataSource         = self
+        baseTableView.delegate           = self
+        baseTableView.estimatedRowHeight = view.bounds.height / 2.5
+        baseTableView.separatorStyle     = .none
         
         // proposition
-        proposition.dataSource              = self
-        proposition.delegate                = self
-        proposition.isHidden                = true
+        proposition.dataSource           = self
+        proposition.delegate             = self
+        proposition.isHidden             = true
         
         
         // search bar
-        searchBar.searchBarStyle = UISearchBar.Style.default
-        searchBar.placeholder = " Search..."
+        searchBar.searchBarStyle         = UISearchBar.Style.default
+        searchBar.placeholder            = " Search..."
         searchBar.sizeToFit()
-        searchBar.isTranslucent = false
-        searchBar.backgroundImage = UIImage()
-        searchBar.delegate = self
-        searchBar.showsCancelButton = true
+        searchBar.isTranslucent          = false
+        searchBar.backgroundImage        = UIImage()
+        searchBar.delegate               = self
+        searchBar.showsCancelButton      = true
                 
-        navigationItem.titleView = searchBar
+        navigationItem.titleView         = searchBar
         
-        changeRefreshControlTitle(with: "cats")
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: UIControl.Event.valueChanged)
+        changeRefreshControlTitle(with: "cats")
         baseTableView.addSubview(refreshControl)
         
         getPostsOnStart()
-        udManager.removeHistory()
+//        udManager.removeHistory() // history can be removed
     }
     
     override func loadView() {
@@ -100,6 +106,28 @@ class ViewController: UIViewController {
         
     }
     
+    func getPostsOnStart() {
+//**** used cats posts instead recent posts on start ****//
+//        service.fetchRecentPosts(page: .firstPage) { photos in
+//            if let photos = photos?.photo {
+//                self.photos = photos
+//                print(photos)
+//                self.tableView.reloadData()
+//            }
+//        }
+        
+        service.fetchSearchedPosts(with: "Cats", page: .firstPage) { photos in
+            if let photos = photos?.photo {
+                self.photos = photos
+                print(photos)
+                self.baseTableView.reloadData()
+            }
+        }
+    }
+
+    
+    // MARK: - Refresh Control Actions
+    // refreshControl selector
     @objc func refresh(sender:AnyObject) {
         self.refreshControl.endRefreshing()
         
@@ -117,28 +145,9 @@ class ViewController: UIViewController {
         refreshControl.attributedTitle = NSAttributedString(string: searchedText == nil ? "recent" : searchedText!)
     }
     
-    func getPostsOnStart() {
-        // Disabled recent posts
-//        service.fetchRecentPosts(page: .firstPage) { photos in
-//            if let photos = photos?.photo {
-//                self.photos = photos
-//                print(photos)
-//                self.tableView.reloadData()
-//            }
-//        }
-        service.fetchSearchedPosts(with: "Cats", page: .firstPage) { photos in
-            if let photos = photos?.photo {
-                self.photos = photos
-                print(photos)
-                self.baseTableView.reloadData()
-            }
-        }
-    }
-    
-
-
 }
-// MARK: - TableViewDataSource&TableViewDelegate
+
+// MARK: - TableViewDataSource & TableViewDelegate
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -160,11 +169,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if tableView == baseTableView {
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as? PostCell,
                   let photos = photos else { return UITableViewCell() }
+            cell.selectionStyle = .none
             cell.configureCell(photo: photos[indexPath.row])
             
             return cell
@@ -183,6 +192,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == baseTableView {
+        
+            delegate?.transferImageView(imageUrl: photos![indexPath.row].getPhotoUrl())
+            let vc = FullImageViewController()
+            vc.postImageUrl = photos![indexPath.row].getPhotoUrl()
+            vc.modalPresentationStyle = .fullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            present(vc,animated: true,completion: nil)
             
         } else if tableView == proposition {
             searchBar.text = propositionArray![indexPath.row]
@@ -220,8 +236,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 
             case .search:
                 self.service.fetchSearchedPosts(with: self.searchedText ?? "", page: .nextPage) { photos in
-                    if let photos = photos {
-                        self.photos! += photos.photo
+                    if let photosData = photos,let _ = self.photos {
+                        self.photos! += photosData.photo
                         self.baseTableView.reloadData()
                     }
                 }

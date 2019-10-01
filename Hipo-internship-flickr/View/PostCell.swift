@@ -9,6 +9,9 @@
 import UIKit
 import Kingfisher
 
+protocol MyDelegate: class {
+     func onButtonTapped()
+}
 
 class PostCell: UITableViewCell {
     
@@ -53,6 +56,7 @@ class PostCell: UITableViewCell {
         addSubview(ownerImage)
         addSubview(dateLabel)
         addSubview(postImage)
+        
         
         ownerImage.anchor(top: topAnchor,
                           left: leftAnchor,
@@ -121,16 +125,7 @@ class PostCell: UITableViewCell {
     func configureCell(photo: Photo) {
         ownerLabel.text     = photo.ownername
         dateLabel.text      = photo.datetaken.stringToDate().timeAgoSinceDate()
-//        do {
-//            let ownerData       = try Data(contentsOf: URL(string: photo.getProfilePhoto())!)
-//            let postData        = try Data(contentsOf: URL(string: photo.getPhotoUrl())!)
-//            ownerImage.image    = UIImage(data: ownerData)
-//            postImage.image     = UIImage(data: postData)
-//
-//        } catch {
-//            ownerImage.image    = #imageLiteral(resourceName: "profile")
-//        }
-        // Kingfisher
+        
         ownerImage.kf.setImage(with: URL(string: photo.getProfilePhoto()),options: [.transition(.fade(0.2))])
         postImage.kf.setImage(with: URL(string: photo.getPhotoUrl()),options: [.transition(.fade(0.2))])
     }

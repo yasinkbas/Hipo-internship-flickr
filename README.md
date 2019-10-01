@@ -4,8 +4,8 @@
 ### Desired things
 
 ##### Service
-- [x] Fetching recent photos from flickr-api
-- [x] Fetching searched photos from flickr-api
+- [x] Fetching recent posts from flickr-api
+- [x] Fetching posts from flickr-api with query
 
 ##### Table view
 - [x] implementing tableView
@@ -21,5 +21,4 @@
 
 ##### Bonus
 - [x] Search suggestion
-- [ ] Fullscreen photos
-- [ ] Using PureLayout
+- [x] Fullscreen zoomable photos
