@@ -12,6 +12,9 @@
 - [x] implementing custom cell
 - [x] implementing infinite scroll for table view
 
+##### Image Caching
+- [x] caching photos
+
 ##### Search bar
 - [ ] defining search bar
 

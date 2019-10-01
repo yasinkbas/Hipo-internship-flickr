@@ -6,6 +6,7 @@ target 'Hipo-internship-flickr' do
   use_frameworks!
   pod 'Alamofire'
   pod 'PureLayout'
+  pod 'Kingfisher'
   # Pods for Hipo-internship-flickr
 
   target 'Hipo-internship-flickrTests' do
