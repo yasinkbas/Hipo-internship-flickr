@@ -4,8 +4,8 @@
 ### Desired things
 
 ##### Service
-- [ ] Fetching recent photos from flickr-api
-- [ ] Fetching searched photos from flickr-api
+- [x] Fetching recent photos from flickr-api
+- [x] Fetching searched photos from flickr-api
 
 ##### Table view
 - [ ] implementing infinite scroll for table view

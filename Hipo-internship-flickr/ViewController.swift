@@ -13,7 +13,17 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
+//        Service.shared.fetchRecentPosts { photos in
+//            print(photos)
+//        }
+//        Service.shared.fetchRecentNextPagePosts { photos in
+//            print(photos)
+//        }
+//        Service.shared.fetchSearchedPosts(with: "dogs", page: .firstPage) { photos in
+//            print(photos)
+//        }
+        
     }
     
     override func loadView() {
