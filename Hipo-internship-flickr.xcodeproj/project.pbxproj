@@ -128,7 +128,6 @@
 				C2D03A852343473A005A0A50 /* Info.plist */,
 				C2D03A822343473A005A0A50 /* LaunchScreen.storyboard */,
 				C2E3743C234352060014646A /* Extensions */,
-				C2E3743423434B180014646A /* Env */,
 				C2AAF0C22343828C0076A261 /* Managers */,
 				C2E3743223434AFC0014646A /* Service */,
 				C2E3743323434B0E0014646A /* App */,
@@ -185,13 +184,6 @@
 				C2D03A802343473A005A0A50 /* Assets.xcassets */,
 			);
 			path = App;
-			sourceTree = "<group>";
-		};
-		C2E3743423434B180014646A /* Env */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Env;
 			sourceTree = "<group>";
 		};
 		C2E3743C234352060014646A /* Extensions */ = {
