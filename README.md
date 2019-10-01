@@ -10,7 +10,7 @@
 ##### Table view
 - [x] implementing tableView
 - [x] implementing custom cell
-- [ ] implementing infinite scroll for table view
+- [x] implementing infinite scroll for table view
 
 ##### Search bar
 - [ ] defining search bar
