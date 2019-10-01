@@ -13,13 +13,14 @@ class ViewController: UIViewController {
     // Components
     lazy var tableView = UITableView()
     lazy var searchBar:UISearchBar = UISearchBar()
+    lazy var refreshControl = UIRefreshControl()
     
     // instances
     var safeArea: UILayoutGuide!
     
     var photos: [Photo]? = nil
     var method: FlickrMethod = .recent
-    var searchedText: String?
+    var searchedText: String? = "cats"
     var fetchingMore = false
     
     var service = Service.shared
@@ -41,20 +42,14 @@ class ViewController: UIViewController {
         searchBar.backgroundImage = UIImage()
         searchBar.delegate = self
         searchBar.showsCancelButton = false
-        
-        // remove x button from searchbar because we already use cancel button
-        let searchBarStyle = searchBar.value(forKey: "searchField") as? UITextField
-        searchBarStyle?.clearButtonMode = .never
-        
+                
         navigationItem.titleView = searchBar
         
-        service.fetchRecentPosts(page: .firstPage) { photos in
-            if let photos = photos?.photo {
-                self.photos = photos
-                print(photos)
-                self.tableView.reloadData()
-            }
-        }
+        changeRefreshControlTitle(with: "cats")
+        refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: UIControl.Event.valueChanged)
+        tableView.addSubview(refreshControl)
+        
+        getPostsOnStart()
     }
     
     override func loadView() {
@@ -77,6 +72,43 @@ class ViewController: UIViewController {
         
         tableView.register(PostCell.self, forCellReuseIdentifier: "cell")
     }
+    
+    @objc func refresh(sender:AnyObject) {
+        self.refreshControl.endRefreshing()
+        
+        if let searched = searchedText {
+            service.fetchSearchedPosts(with: searched, page: .firstPage) { photos in
+                guard let photos = photos?.photo else { return }
+                self.photos = photos
+            }
+        } else {
+            getPostsOnStart()
+        }
+    }
+    
+    func changeRefreshControlTitle(with text:String) {
+        refreshControl.attributedTitle = NSAttributedString(string: searchedText == nil ? "recent" : searchedText!)
+    }
+    
+    func getPostsOnStart() {
+        // Disabled recent posts
+//        service.fetchRecentPosts(page: .firstPage) { photos in
+//            if let photos = photos?.photo {
+//                self.photos = photos
+//                print(photos)
+//                self.tableView.reloadData()
+//            }
+//        }
+        service.fetchSearchedPosts(with: "Cats", page: .firstPage) { photos in
+            if let photos = photos?.photo {
+                self.photos = photos
+                print(photos)
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+
 
 }
 // MARK: - TableViewDataSource&TableViewDelegate
@@ -121,10 +153,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 
             case .recent:
                 self.service.fetchRecentPosts(page: .nextPage) { photos in
-                   if let photos = photos {
-                       self.photos! += photos.photo
-                       self.tableView.reloadData()
-                       print(self.photos)
+                    if let photos = photos {
+                        self.photos! += photos.photo
+                        self.tableView.reloadData()
                    }
                }
                 
@@ -133,7 +164,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                     if let photos = photos {
                         self.photos! += photos.photo
                         self.tableView.reloadData()
-                        print(self.photos)
                     }
                 }
             }
@@ -148,17 +178,18 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        // show cancel button if not empty
-        if let text = searchBar.text {
-            searchBar.showsCancelButton = text == "" ? false : true
-        }
+//         show cancel button if not empty
+//        if let text = searchBar.text {
+//            searchBar.showsCancelButton = text == "" ? false : true
+//        }
+        searchBar.showsCancelButton = true // showed cancel button for using dissmiss keyboard
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // clear the text in the search bar
         searchBar.text = ""
-        // hideCancel button
         searchBar.showsCancelButton = false
+        
+        self.searchBar.endEditing(true)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -170,7 +201,7 @@ extension ViewController: UISearchBarDelegate {
             self.photos = photos.photo
             self.searchBar.endEditing(true)
             self.tableView.reloadData()
-            
+            self.changeRefreshControlTitle(with: text)
         }
     }
 }
