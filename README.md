@@ -8,6 +8,8 @@
 - [x] Fetching searched photos from flickr-api
 
 ##### Table view
+- [x] implementing tableView
+- [x] implementing custom cell
 - [ ] implementing infinite scroll for table view
 
 ##### Search bar

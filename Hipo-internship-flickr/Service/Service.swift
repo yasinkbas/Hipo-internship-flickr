@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-fileprivate enum FlickrMethod:String {
+enum FlickrMethod:String {
     case recent     = "flickr.photos.getRecent"
     case popular    = "flickr.photos.getPopular"
     case search     = "flickr.photos.search"
@@ -108,6 +108,7 @@ extension Service {
 extension Service {
     /// fetches searched posts  from API with first or next page
     func fetchSearchedPosts(with word: String, page: PageStyle, completionHandler: @escaping (_: Photos?) -> Void) {
+        
         switch page {
               case .firstPage:
                   searchedPage = 1

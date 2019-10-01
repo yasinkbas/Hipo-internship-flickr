@@ -16,6 +16,10 @@
 		C2E3743523434C1A0014646A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2D03A822343473A005A0A50 /* LaunchScreen.storyboard */; };
 		C2E3743723434CD60014646A /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3743623434CD60014646A /* Service.swift */; };
 		C2E3743B23434F880014646A /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3743A23434F880014646A /* Post.swift */; };
+		C2E3743E23435CAD0014646A /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3743D23435CAD0014646A /* PostCell.swift */; };
+		C2E3744023435CE90014646A /* Date+Timeago.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3743F23435CE90014646A /* Date+Timeago.swift */; };
+		C2E3744223435D0C0014646A /* String+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3744123435D0C0014646A /* String+Date.swift */; };
+		C2E3744423435D320014646A /* UIView+Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E3744323435D320014646A /* UIView+Constraints.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +50,10 @@
 		C2D03A902343473A005A0A50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C2E3743623434CD60014646A /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		C2E3743A23434F880014646A /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		C2E3743D23435CAD0014646A /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		C2E3743F23435CE90014646A /* Date+Timeago.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Timeago.swift"; sourceTree = "<group>"; };
+		C2E3744123435D0C0014646A /* String+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Date.swift"; sourceTree = "<group>"; };
+		C2E3744323435D320014646A /* UIView+Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Constraints.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +144,7 @@
 		C2E3743023434AF40014646A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				C2E3743D23435CAD0014646A /* PostCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -174,6 +183,9 @@
 		C2E3743C234352060014646A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				C2E3743F23435CE90014646A /* Date+Timeago.swift */,
+				C2E3744123435D0C0014646A /* String+Date.swift */,
+				C2E3744323435D320014646A /* UIView+Constraints.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -354,10 +366,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2E3744223435D0C0014646A /* String+Date.swift in Sources */,
 				C2D03A7C2343473A005A0A50 /* ViewController.swift in Sources */,
 				C2D03A782343473A005A0A50 /* AppDelegate.swift in Sources */,
 				C2E3743723434CD60014646A /* Service.swift in Sources */,
+				C2E3744023435CE90014646A /* Date+Timeago.swift in Sources */,
 				C2E3743B23434F880014646A /* Post.swift in Sources */,
+				C2E3743E23435CAD0014646A /* PostCell.swift in Sources */,
+				C2E3744423435D320014646A /* UIView+Constraints.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
