@@ -111,7 +111,6 @@ class ViewController: UIViewController {
 //        service.fetchRecentPosts(page: .firstPage) { photos in
 //            if let photos = photos?.photo {
 //                self.photos = photos
-//                print(photos)
 //                self.tableView.reloadData()
 //            }
 //        }
@@ -119,7 +118,6 @@ class ViewController: UIViewController {
         service.fetchSearchedPosts(with: "Cats", page: .firstPage) { photos in
             if let photos = photos?.photo {
                 self.photos = photos
-                print(photos)
                 self.baseTableView.reloadData()
             }
         }
@@ -177,13 +175,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             cell.configureCell(photo: photos[indexPath.row])
             
             return cell
+            
         } else if tableView == proposition {
-            print(1)
+            
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "propositionCell") else { return UITableViewCell() }
             cell.textLabel?.text = propositionArray![indexPath.row]
-            print(propositionArray![indexPath.row])
             
             return cell
+            
         } else {
             return UITableViewCell()
         }
@@ -210,8 +209,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         
-        print("offsetY: \(offsetY), totalHeight: \(contentHeight)")
-        
         if offsetY > contentHeight - scrollView.frame.height {
             if !fetchingMore {
                 beginBatchFetch()
@@ -221,7 +218,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func beginBatchFetch() {
         fetchingMore = true
-        print("fetch is started")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             switch self.method {
@@ -244,7 +240,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             }
            
             self.fetchingMore = false
-            print("fetch is ended")
         }
     }
 }

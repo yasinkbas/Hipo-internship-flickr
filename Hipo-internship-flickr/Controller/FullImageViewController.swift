@@ -55,6 +55,7 @@ class FullImageViewController: UIViewController, Transmission {
         
     }
     
+    // Transmission function
     func transferImageView(imageUrl: String) {
         self.postImageView!.kf.setImage(with: URL(string: imageUrl))
     }
