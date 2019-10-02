@@ -66,7 +66,8 @@ class FullImageViewController: UIViewController, Transmission {
 
 }
 
-extension FullImageViewController: UIScrollViewDelegate {func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+extension FullImageViewController: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return postImageView
     }
 }

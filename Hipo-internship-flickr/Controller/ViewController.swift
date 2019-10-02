@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     lazy var baseTableView = UITableView()
     lazy var searchBar:UISearchBar = UISearchBar()
     lazy var refreshControl = UIRefreshControl()
-    lazy var proposition = UITableView()
+    lazy var historyTableView = UITableView()
     
     // instances
     var safeArea: UILayoutGuide!
@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     var method: FlickrMethod = .search
     var searchedText: String? = "cats"
     var fetchingMore = false
-    var propositionArray: [String]? = nil
+    var historyArray: [String]? = nil
     
     var service = Service.shared
     var udManager = UserDefaultsManager.shared
@@ -37,16 +37,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // base table view
+        // baseTableView
         baseTableView.dataSource         = self
         baseTableView.delegate           = self
         baseTableView.estimatedRowHeight = view.bounds.height / 2.5
         baseTableView.separatorStyle     = .none
         
-        // proposition
-        proposition.dataSource           = self
-        proposition.delegate             = self
-        proposition.isHidden             = true
+        // historyTableView
+        historyTableView.dataSource           = self
+        historyTableView.delegate             = self
+        historyTableView.isHidden             = true
         
         
         // search bar
@@ -76,7 +76,7 @@ class ViewController: UIViewController {
         view.addSubview(baseTableView)
         
         setupBaseTableView()
-        setupProposition()
+        setupHistoryTableView()
     }
     
     func setupBaseTableView() {
@@ -92,17 +92,17 @@ class ViewController: UIViewController {
         baseTableView.register(PostCell.self, forCellReuseIdentifier: "cell")
     }
     
-    func setupProposition() {
-        view.addSubview(proposition)
+    func setupHistoryTableView() {
+        view.addSubview(historyTableView)
         
-        proposition.translatesAutoresizingMaskIntoConstraints = false
-        proposition.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        proposition.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        proposition.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        proposition.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        historyTableView.translatesAutoresizingMaskIntoConstraints = false
+        historyTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        historyTableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        historyTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        historyTableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
         
-        proposition.register(UITableViewCell.self, forCellReuseIdentifier: "propositionCell")
+        historyTableView.register(UITableViewCell.self, forCellReuseIdentifier: "historyCell")
         
     }
     
@@ -159,8 +159,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == baseTableView {
             return photos?.count ?? 0
-        } else if tableView == proposition {
-            return propositionArray?.count ?? 0
+        } else if tableView == historyTableView {
+            
+            if historyArray != nil {
+                historyArray?.append("Clear History")
+                return historyArray!.count
+            }
+            return 0
+            
         } else {
             return 0
         }
@@ -176,10 +182,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             
             return cell
             
-        } else if tableView == proposition {
+        } else if tableView == historyTableView {
             
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "propositionCell") else { return UITableViewCell() }
-            cell.textLabel?.text = propositionArray![indexPath.row]
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "historyCell") else { return UITableViewCell() }
+            
+            if indexPath.row == historyArray!.count - 1 {
+                cell.textLabel?.textColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
+                cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+                cell.textLabel?.text = historyArray![indexPath.row]
+                cell.textLabel?.textAlignment = .center
+            } else {
+                cell.textLabel?.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 18)
+                cell.textLabel?.text = historyArray![indexPath.row]
+                cell.textLabel?.textAlignment = .left
+            }
             
             return cell
             
@@ -199,8 +216,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             vc.modalTransitionStyle = .crossDissolve
             present(vc,animated: true,completion: nil)
             
-        } else if tableView == proposition {
-            searchBar.text = propositionArray![indexPath.row]
+        } else if tableView == historyTableView {
+            if indexPath.row == historyArray!.count - 1 {
+                udManager.removeHistory()
+                historyTableView.isHidden = true
+                searchBar.text = ""
+                searchBar.endEditing(true)
+            }
+            else {
+                searchBar.text = historyArray![indexPath.row]
+            }
+            
         }
     }
     
@@ -253,7 +279,7 @@ extension ViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
-        proposition.isHidden = true
+        historyTableView.isHidden = true
         searchBar.endEditing(true)
     }
     
@@ -268,14 +294,14 @@ extension ViewController: UISearchBarDelegate {
             self.baseTableView.reloadData()
             self.changeRefreshControlTitle(with: text)
             self.udManager.addHistory(text: text)
-            self.proposition.isHidden = true
+            self.historyTableView.isHidden = true
         }
     }
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        propositionArray = udManager.getHistory()?.reversed()
-        proposition.reloadData()
-        proposition.isHidden = propositionArray == nil // if history is nil don't show proposition tableview
+        historyArray = udManager.getHistory()?.reversed()
+        historyTableView.reloadData()
+        historyTableView.isHidden = historyArray == nil // if history is nil don't show history tableview
         return true
     }
 
