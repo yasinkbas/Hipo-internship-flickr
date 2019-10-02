@@ -9,7 +9,7 @@
 import UIKit
 import Kingfisher
 
-class FullImageViewController: UIViewController, Transmission {
+class FullImageViewController: UIViewController {
    
     var postImageView:UIImageView?
     var postImageUrl: String?
@@ -20,6 +20,7 @@ class FullImageViewController: UIViewController, Transmission {
 
     }
 
+    // MARK: loadView
     override func loadView() {
         super.loadView()
 
@@ -55,17 +56,13 @@ class FullImageViewController: UIViewController, Transmission {
         
     }
     
-    // Transmission function
-    func transferImageView(imageUrl: String) {
-        self.postImageView!.kf.setImage(with: URL(string: imageUrl))
-    }
-    
     @objc func closeButtonClicked(_ sender:Any) {
         dismiss(animated: true, completion: nil)
     }
 
 }
 
+// MARK: ScrollViewDelegate
 extension FullImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return postImageView

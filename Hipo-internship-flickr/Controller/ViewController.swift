@@ -8,13 +8,7 @@
 
 import UIKit
 
-protocol Transmission: class {
-    func transferImageView(imageUrl:String)
-}
-
 class ViewController: UIViewController {
-    
-    private weak var delegate: Transmission?
     
     // Components
     lazy var baseTableView = UITableView()
@@ -34,6 +28,7 @@ class ViewController: UIViewController {
     var service = Service.shared
     var udManager = UserDefaultsManager.shared
 
+//    MARK: - View didLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,6 +63,7 @@ class ViewController: UIViewController {
 //        udManager.removeHistory() // history can be removed
     }
     
+    // MARK: Load View
     override func loadView() {
         super.loadView()
         
@@ -106,6 +102,7 @@ class ViewController: UIViewController {
         
     }
     
+    // MARK: - Posts on start
     func getPostsOnStart() {
 //**** used cats posts instead recent posts on start ****//
 //        service.fetchRecentPosts(page: .firstPage) { photos in
@@ -172,6 +169,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    // MARK: TableView: CellForRow
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == baseTableView {
             
@@ -206,10 +204,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
        
     }
     
+    // MARK: TableView: didSelect
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == baseTableView {
         
-            delegate?.transferImageView(imageUrl: photos![indexPath.row].getPhotoUrl())
             let vc = FullImageViewController()
             vc.postImageUrl = photos![indexPath.row].getPhotoUrl()
             vc.modalPresentationStyle = .fullScreen
